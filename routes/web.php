@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\Admin\AdminMenuController;
+use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\client\CartController;
 use App\Http\Controllers\client\CategoryController;
@@ -10,18 +14,6 @@ use App\Http\Controllers\client\PageController;
 use App\Http\Controllers\client\ProductController;
 use App\Http\Controllers\client\WishlistController;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\CodeCoverage\Report\Html\CustomCssFile;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/',          [PageController::class, 'index'])->name('homepage');
 Route::get('/product',   [ProductController::class, 'index'])->name('product');
@@ -35,10 +27,34 @@ Route::get('/contact',   [ContactController::class, 'index'])->name('contact');
 Route::get('/faq',       [PageController::class, 'faq'])->name('faq');
 Route::get('/error404',  [PageController::class, 'error404'])->name('error404');
 
+Route::get('/adminlogin', [AdminController::class, 'loginAdmin']);
+Route::post('/adminlogin', [AdminController::class, 'postloginAdmin']);
+Route::get('/admins', [DashboardController::class, 'index']);
 Route::group(['prefix' => 'admins'], function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('admin');
-    Route::group(['prefix' => 'product'], function () {
-        Route::get('/addproduct', [App\Http\Controllers\admin\ProductController::class, 'create'])->name('addproduct');
-        Route::post('/postsever', [App\Http\Controllers\admin\ProductController::class, 'store'])->name('postsever');
+
+    Route::group(['prefix' => 'adcategory'], function () {
+        Route::get('/', [AdminCategoryController::class, 'index'])->name('category.index');
+        Route::get('/create', [AdminCategoryController::class, 'create'])->name('category.create');
+        Route::post('/store', [AdminCategoryController::class, 'store'])->name('category.store');
+        Route::get('/edit/{id}', [AdminCategoryController::class, 'edit'])->name('category.edit');
+        Route::post('/update/{id}', [AdminCategoryController::class, 'update'])->name('category.update');
+        Route::get('/delete/{id}', [AdminCategoryController::class, 'delete'])->name('category.delete');
+    });
+
+    Route::group(['prefix' => 'admenu'], function () {
+        Route::get('/', [AdminMenuController::class, 'index'])->name('menu.index');
+        Route::get('/create', [AdminMenuController::class, 'create'])->name('menu.create');
+        Route::post('/store', [AdminMenuController::class, 'store'])->name('menu.store');
+        Route::get('/edit/{id}', [AdminMenuController::class, 'edit'])->name('menu.edit');
+        Route::post('/update/{id}', [AdminMenuController::class, 'update'])->name('menu.update');
+        Route::get('/delete/{id}', [AdminMenuController::class, 'delete'])->name('menu.delete');
+    });
+
+    Route::group(['prefix' => 'adproduct'], function () {
+        Route::get('/', [AdminProductController::class, 'index'])->name('product.index');
+        Route::get('/create', [AdminProductController::class, 'create'])->name('product.create');
+        Route::post('/store', [AdminProductController::class, 'store'])->name('product.store');
+        Route::get('/edit{id}', [AdminProductController::class, 'edit'])->name('product.edit');
+        Route::post('/update{id}', [AdminProductController::class, 'update'])->name('product.update');
     });
 });

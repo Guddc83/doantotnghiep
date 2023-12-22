@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,24 +10,22 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CategoryFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\FactoryBuilder
-     */
-    public function definition(): FactoryBuilder
+    protected $model = Category::class;
+
+    public function definition()
     {
-        return $this->state([
-            'name' => $this->faker->word,
+        return [
+            'name' => $this->faker->unique()->word,
             'parent_id' => null,
-        ]);
+        ];
     }
-    public function childCategory(): FactoryBuilder
+
+    public function withChildren()
     {
-        return $this->state([
-            'parent_id' => function () {
-                return Category::factory()->create()->id;
-            },
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'children' => CategoryFactory::count(rand(1, 3))->make(),
+            ];
+        });
     }
 }

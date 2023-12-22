@@ -8,29 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'category_id',
-        'name',
-        'description',
-        'content',
-        'avartar',
-        'status',
-        'hot',
-        'price',
-        'sale',
-        'total_pay',
-        'total_stars',
-    ];
-
-    // Relations
+    protected $guarded = [];
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class, 'product_id');
+    }
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(category::class, 'category_id');
     }
-
-    // Phương thức tùy chọn
-    public function getPriceWithSale(): float
+    public function productImages()
     {
-        return $this->price - ($this->price * $this->sale / 100);
+        return $this->hasMany(ProductImage::class, 'product_id');
     }
 }
